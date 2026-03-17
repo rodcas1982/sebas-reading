@@ -594,7 +594,7 @@
             }
         }, 800);
     }
-    function retryHFW(){renderHFW();}
+    function retryHFW(){document.getElementById('wrong').classList.remove('active');document.getElementById('hfw').classList.add('active');renderHFW();}
     function showConfetti(){let c=document.getElementById('confetti');c.innerHTML='';c.classList.add('on');let cols=['#FF6B6B','#4ECDC4','#FFE66D','#A66CFF','#5C7AEA','#6BCB77'];for(let i=0;i<50;i++){let p=document.createElement('div');p.className='piece';p.style.left=Math.random()*100+'%';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*2+'s';p.style.borderRadius=Math.random()>0.5?'50%':'0';c.appendChild(p);}setTimeout(()=>c.classList.remove('on'),5000);}
     </script>
 </body>
