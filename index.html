@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sebas's Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {--primary:#FF6B6B;--secondary:#4ECDC4;--accent:#FFE66D;--purple:#A66CFF;--blue:#5C7AEA;--green:#6BCB77;--dark:#2D3436;--white:#FFF;--shadow:0 8px 30px rgba(0,0,0,0.12);--shadow-lg:0 15px 50px rgba(0,0,0,0.15);}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#E8F4FD,#A8D4EA);min-height:100vh}
+        .screen{display:none;min-height:100vh;padding:20px}
+        .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .logo{font-size:80px;margin-bottom:20px;animation:bounce 2s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        h1{font-size:36px;font-weight:800;color:var(--purple);margin-bottom:10px;text-align:center}
+        p{font-size:18px;color:var(--dark);margin-bottom:40px;text-align:center}
+        .btn{background:linear-gradient(135deg,var(--purple),#C49BFF);color:#FFF;border:none;padding:20px 50px;font-size:22px;font-weight:700;border-radius:50px;cursor:pointer;box-shadow:0 10px 30px rgba(166,108,255,0.4)}
+        .btn:active{transform:scale(0.95)}
+        .card{background:var(--white);border-radius:30px;padding:30px;width:100%;max-width:450px;box-shadow:var(--shadow-lg)}
+        .card h2{font-size:24px;font-weight:700;color:var(--dark);margin-bottom:25px;text-align:center}
+        .input-group{margin-bottom:20px}
+        .input-group label{display:block;font-size:16px;font-weight:600;color:var(--dark);margin-bottom:8px}
+        .input-field{width:100%;padding:15px 20px;font-size:20px;border:3px solid #E8E8E8;border-radius:15px}
+        .input-field:focus{outline:none;border-color:var(--secondary)}
+        .setup-btn{width:100%;background:linear-gradient(135deg,var(--green),#8AE69D);color:#FFF;border:none;padding:18px;font-size:20px;font-weight:700;border-radius:18px;cursor:pointer}
+        .header{width:100%;max-width:800px;display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+        .greeting{font-size:24px;font-weight:700;color:var(--dark)}
+        .greeting span{color:var(--purple)}
+        .stars{display:flex;align-items:center;gap:8px;background:var(--accent);padding:10px 18px;border-radius:30px;font-size:18px;font-weight:700}
+        .title{font-size:22px;font-weight:700;color:var(--dark);margin-bottom:15px;text-align:center}
+        .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;width:100%;max-width:800px}
+        .activity{background:var(--white);border-radius:20px;padding:18px;cursor:pointer;transition:transform .3s;box-shadow:var(--shadow);text-align:center}
+        .activity:hover{transform:translateY(-3px)}
+        .activity-icon{font-size:38px;margin-bottom:8px}
+        .activity-name{font-size:14px;font-weight:700;color:var(--dark)}
+        .act-header{width:100%;max-width:700px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+        .back{background:var(--white);border:none;padding:12px 20px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
+        .badge{background:var(--purple);color:#FFF;padding:10px 25px;border-radius:20px;font-size:20px;font-weight:700}
+        .task{background:var(--white);border-radius:20px;padding:20px;width:100%;max-width:700px;margin-bottom:25px;box-shadow:var(--shadow)}
+        .task h3{color:var(--dark);margin-bottom:10px}
+        .task p{color:#666;font-size:16px;margin:0}
+        .img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:700px}
+        .img-card{background:var(--white);border-radius:16px;padding:10px;cursor:pointer;transition:all .3s;box-shadow:var(--shadow);text-align:center;border:3px solid transparent}
+        .img-card:hover{transform:scale(1.05)}
+        .img-card.correct{border-color:var(--green);background:#E8F8EE}
+        .img-card.wrong{border-color:var(--primary);background:#FFE8E8}
+        .img-card .emoji{font-size:38px;display:block;margin-bottom:4px}
+        .img-card .label{font-size:11px;font-weight:600;color:var(--dark)}
+        .img-card .check{width:24px;height:24px;border:3px solid #DDD;border-radius:50%;margin:4px auto 0;display:flex;align-items:center;justify-content:center;font-size:12px}
+        .img-card.correct .check{background:var(--green);border-color:var(--green);color:#FFF}
+        .fill-card{background:var(--white);border-radius:25px;padding:30px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);text-align:center}
+        .fill-word{font-size:45px;font-weight:800;color:var(--dark);margin:20px 0}
+        .fill-word .miss{color:var(--primary)}
+        .fill-emoji{font-size:90px;margin-bottom:15px}
+        .letter-btns{display:flex;gap:10px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+        .letter-btn{width:55px;height:55px;border:3px solid #DDD;border-radius:15px;background:var(--white);font-size:24px;font-weight:700;cursor:pointer}
+        .letter-btn:hover{border-color:var(--purple)}
+        .letter-btn.selected{border-color:var(--purple);background:var(--purple);color:#FFF}
+        .hfw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:500px}
+        .hfw-card{background:var(--white);border-radius:14px;padding:14px;cursor:pointer;transition:all .3s;box-shadow:var(--shadow);text-align:center;border:3px solid transparent;font-size:18px;font-weight:700}
+        .hfw-card:hover{transform:scale(1.05)}
+        .hfw-card.correct{background:var(--green);border-color:var(--green);color:#FFF}
+        .hfw-card.wrong{background:var(--primary);border-color:var(--primary);color:#FFF}
+        .complete{text-align:center;padding:40px}
+        .trophy{font-size:80px;margin-bottom:15px}
+        .complete h2{font-size:32px;font-weight:800;color:var(--green);margin-bottom:10px}
+        .stars-earned{font-size:40px;margin-bottom:25px}
+        .continue{background:linear-gradient(135deg,var(--purple),#C49BFF);color:#FFF;border:none;padding:15px 40px;font-size:18px;font-weight:700;border-radius:50px;cursor:pointer}
+        .actions{display:flex;gap:15px;justify-content:center;margin-top:25px;flex-wrap:wrap}
+        .action-btn{padding:14px 28px;font-size:16px;font-weight:700;border-radius:50px;cursor:pointer;border:none;display:flex;align-items:center;gap:8px}
+        .check-btn{background:linear-gradient(135deg,var(--green),#8AE69D);color:#FFF}
+        .next-btn{background:linear-gradient(135deg,var(--secondary),#7EDDD6);color:#FFF}
+        .speak-btn{background:linear-gradient(135deg,var(--blue),#7B93FF);color:#FFF}
+        .bar{background:#E8E8E8;width:100%;max-width:700px;height:12px;border-radius:10px;overflow:hidden;margin-bottom:20px}
+        .fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--secondary));border-radius:10px;transition:width .5s}
+        .confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;display:none}
+        .confetti.on{display:block}
+        .piece{position:absolute;width:12px;height:12px;animation:fall 3s linear forwards}
+        @keyframes fall{to{transform:translateY(100vh) rotate(720deg);opacity:0}}
+        @media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}.img-grid{grid-template-columns:repeat(3,1fr)}.hfw-grid{grid-template-columns:repeat(3,1fr)}}
+    </style>
+</head>
+<body>
+    <div id="welcome" class="screen active">
+        <div class="logo">👦</div>
+        <h1>Sebas's Reading 🧒</h1>
+        <p>Learn English with Fun!</p>
+        <button class="btn" onclick="document.getElementById('welcome').classList.remove('active');document.getElementById('setup').classList.add('active')">Start! 🚀</button>
+    </div>
+    <div id="setup" class="screen">
+        <div class="card">
+            <h2>👋 What's Your Name?</h2>
+            <div class="input-group">
+                <label>Your Name</label>
+                <input type="text" id="nameInput" class="input-field" placeholder="Your name" maxlength="15">
+            </div>
+            <button class="setup-btn" onclick="name=document.getElementById('nameInput').value.trim()||'Sebas';document.getElementById('displayName').textContent=name;document.getElementById('setup').classList.remove('active');document.getElementById('dashboard').classList.add('active')">Let's Learn! 🎉</button>
+        </div>
+    </div>
+    <div id="dashboard" class="screen">
+        <div class="header">
+            <div class="greeting">Hi, <span id="displayName">Friend</span>! 👋</div>
+            <div class="stars" onclick="alert('Stars: ' + stars)">⭐ <span id="totalStars">0</span></div>
+        </div>
+        <p class="title">Choose an Activity</p>
+        <div class="grid">
+            <div class="activity" onclick="document.getElementById('hfw').classList.add('active');document.getElementById('dashboard').classList.remove('active');hfwIdx=0;renderHFW();setTimeout(playHFW,1000)"><div class="activity-icon">📝</div><div class="activity-name">HFW</div></div>
+            <div class="activity" onclick="document.getElementById('dashboard').classList.remove('active');document.getElementById('fill').classList.add('active');fillIdx=0;window.shuffledFill=sh(fillData);renderSpelling();setTimeout(speakSpelling,500)"><div class="activity-icon">✏️</div><div class="activity-name">Spelling</div></div>
+            <div class="activity" onclick="whStoryIdx=0;whQIdx=0;window.shuffledStories=sh(whStories);window.shuffledStories.forEach(s=>s.questions=sh(s.questions));renderWH();document.getElementById('wh-screen').classList.add('active');document.getElementById('dashboard').classList.remove('active')"><div class="activity-icon">❓</div><div class="activity-name">WH Questions</div></div>
+        </div>
+    </div>
+    <div id="circle" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">Sound: <span id="soundLabel">S</span></div>
+        </div>
+        <div class="bar"><div class="fill" id="progressBar" style="width:0%"></div></div>
+        <div class="task">
+            <h3>🔊 Circle the pictures!</h3>
+            <p>Circle pictures that BEGIN with <strong><span id="soundName">S</span></strong>!</p>
+            <p style="color:#888;margin-top:10px">🟡 Rodea las imágenes que empiezan con <strong><span id="soundNameES">S</span></strong></p>
+        </div>
+        <div class="img-grid" id="imgGrid"></div>
+        <div class="actions">
+            <button class="action-btn speak-btn" onclick="speakCircle()">🔊 Listen</button>
+            <button class="action-btn check-btn" onclick="checkCircle()">✓ Check</button>
+        </div>
+    </div>
+    <div id="fill" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">✏️ Spelling</div>
+        </div>
+        <div class="bar"><div class="fill" id="fillBar" style="width:0%"></div></div>
+        <div class="fill-card">
+            <div class="fill-emoji" id="fillEmoji" style="font-size:80px">🤖</div>
+            <div class="fill-word" id="fillWord" style="font-size:32px;letter-spacing:5px;min-height:50px;background:#fff;padding:10px;border-radius:10px;border:3px solid #4ECDC4">_ _ _ _ _</div>
+            <p style="color:#666;margin:15px 0">Spell the word!</p>
+            <p style="color:#888">🟡 ¡Escritura la palabra!</p>
+            <div class="letter-btns" id="letterBtns" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px"></div>
+        </div>
+        <div class="actions" style="gap:10px;flex-direction:column">
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn" style="background:#5C7AEA" onclick="speakSpellingEN()">🔊 English</button>
+                <button class="action-btn" style="background:#A66CFF" onclick="speakSpellingES()">🔊 Español</button>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn speak-btn" onclick="speakSpelling()">🔊 Word</button>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn" style="background:#FF6B6B" onclick="backspaceSpelling()">⬅️ Back</button>
+                <button class="action-btn" style="background:#FF6B6B" onclick="clearSpelling()">🗑️ Clear</button>
+                <button class="action-btn check-btn" onclick="checkSpelling()">✓ Check</button>
+            </div>
+        </div>
+    </div>
+    <div id="hfw" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">📝 HFW <span id="hfwProgress"></span></div>
+        </div>
+        <div class="task">
+            <h3>🔊 Listen and click!</h3>
+            <p>Listen and click the correct word!</p>
+        </div>
+        <div class="hfw-grid" id="hfwGrid"></div>
+        <div class="actions" id="hfwActions" style="gap:10px;flex-wrap:wrap;justify-content:center;flex-direction:column">
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn" style="background:#5C7AEA" onclick="playHFWInstructions()">🔊 English</button>
+                <button class="action-btn" style="background:#A66CFF" onclick="playHWES()">🔊 Español</button>
+            </div>
+            <button class="action-btn speak-btn" onclick="playHFW()">🔊 Word</button>
+        </div>
+    </div>
+    <div id="complete" class="screen">
+        <div class="complete">
+            <div class="trophy">🏆</div>
+            <h2>Great Job!</h2>
+            <div class="stars-earned" id="earnedStars">⭐⭐⭐</div>
+            <button class="continue" onclick="home()">Continue →</button>
+        </div>
+    </div>
+    <div id="wrong" class="screen">
+        <div class="complete">
+            <div class="trophy">😅</div>
+            <h2>Try Again!</h2>
+            <p style="margin-bottom:10px">The answer was: <strong id="correctAnswer"></strong></p>
+            <p style="margin-bottom:20px;color:#888">🟡 La respuesta era: <strong id="correctAnswerES"></strong></p>
+            <button class="continue" onclick="retryHFW()">Try Again →</button>
+        </div>
+    </div>
+    
+    <!-- WH Questions Screen -->
+    <div id="wh-screen" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">❓ WH <span id="whProgress"></span></div>
+        </div>
+        <div class="task" id="whStory" style="text-align:left;">
+            <h3 id="whTitle">Story Title</h3>
+            <p id="whText" style="font-size:14px;line-height:1.6;">Story text...</p>
+        </div>
+        <div class="task" id="whQuestion">
+            <h3 id="whQText">Question?</h3>
+            <div class="hfw-grid" id="whOptions"></div>
+        </div>
+        <div class="actions" style="gap:10px;flex-direction:column">
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn" style="background:#4ECDC4" onclick="speakStory()">📖 Story</button>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn" style="background:#5C7AEA" onclick="speakWHEN()">🔊 English</button>
+                <button class="action-btn" style="background:#A66CFF" onclick="speakWHES()">🔊 Español</button>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center">
+                <button class="action-btn speak-btn" onclick="speakWH()">🔊 Listen</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="confetti" id="confetti"></div>
+    <script>
+    // Voice setup - try to get best available voice
+    let voiceEN = null;
+    let voiceES = null;
+    
+    function loadBetterVoices() {
+        const voices = speechSynthesis.getVoices();
+        if(voices.length > 0){
+            voiceEN = voices.find(v => v.lang.startsWith('en') && v.name.includes('Female')) || 
+                      voices.find(v => v.lang.startsWith('en')) || null;
+            voiceES = voices.find(v => v.lang.startsWith('es') && v.name.includes('Female')) || 
+                      voices.find(v => v.lang.startsWith('es')) || null;
+        }
+    }
+    
+    // Try loading voices multiple times (some browsers need it)
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadBetterVoices;
+    }
+    // Load voices immediately and with delays
+    loadBetterVoices();
+    setTimeout(loadBetterVoices, 100);
+    setTimeout(loadBetterVoices, 500);
+    setTimeout(loadBetterVoices, 1000);
+    
+    // EXACT WORDS FROM AMANDA'S EXERCISES
+    const circleData={
+        s:{correct:[{e:'☀️',l:'Sun'},{e:'🥪',l:'Sandwich'},{e:'🧼',l:'Soap'},{e:'6️⃣',l:'Six'},{e:'🪚',l:'Saw'},{e:'🧦',l:'Sock'},{e:'🚿',l:'Sink'},{e:'👔',l:'Suit'},{e:'⛵',l:'Sail'},{e:'🪑',l:'Seat'}],wrong:[{e:'🛏️',l:'Bed'},{e:'🚪',l:'Door'},{e:'🔔',l:'Bell'},{e:'2️⃣',l:'Two'}]},
+        t:{correct:[{e:'🌀',l:'Top'},{e:'🧸',l:'Toys'},{e:'🔟',l:'Ten'},{e:'🎫',l:'Tape'},{e:'🎟️',l:'Ticket'},{e:'2️⃣',l:'Two'},{e:'🛞',l:'Tire'},{e:'⛺',l:'Tent'},{e:'📌',l:'Tack'},{e:'🛁',l:'Tub'}],wrong:[{e:'❤️',l:'Heart'},{e:'🚰',l:'Sink'},{e:'🐕',l:'Dog'},{e:'🦇',l:'Bat'}]},
+        b:{correct:[{e:'👶',l:'Baby'},{e:'🐞',l:'Bug'},{e:'⚾',l:'Bat'},{e:'👜',l:'Bag'},{e:'⛵',l:'Boat'},{e:'🛏️',l:'Bed'},{e:'🔔',l:'Bell'},{e:'🚌',l:'Bus'}],wrong:[{e:'🦆',l:'Duck'},{e:'🐒',l:'Monkey'},{e:'🪚',l:'Saw'},{e:'🛞',l:'Tire'}]},
+        h:{correct:[{e:'🎩',l:'Hat'},{e:'❤️',l:'Heart'},{e:'✋',l:'Hand'},{e:'⛰️',l:'Hill'},{e:'🏠',l:'House'},{e:'🔥',l:'Hot'},{e:'🍖',l:'Ham'},{e:'👠',l:'Heel'}],wrong:[{e:'👨',l:'Man'},{e:'🧹',l:'Mop'},{e:'🔑',l:'Key'}]},
+        m:{correct:[{e:'🧹',l:'Mop'},{e:'💰',l:'Money'},{e:'🐭',l:'Mouse'},{e:'👨',l:'Man'},{e:'🗺️',l:'Map'},{e:'🌙',l:'Moon'},{e:'🥛',l:'Milk'},{e:'🧤',l:'Mitt'}],wrong:[{e:'🥪',l:'Sandwich'},{e:'🐞',l:'Bug'},{e:'🧤',l:'Glove'}]},
+        k:{correct:[{e:'🔑',l:'Key'},{e:'👑',l:'King'},{e:'🪁',l:'Kite'},{e:'🐨',l:'Koala'},{e:'🐈',l:'Kitten'},{e:'🦘',l:'Kangaroo'}],wrong:[{e:'🐱',l:'Cat'},{e:'🧤',l:'Mitt'},{e:'🥛',l:'Milk'}]}
+    };
+    
+    // FILL LETTER - Words from exercises
+    // Fill Letter - ONLY words from exercises
+    const fillData=[
+        // Spelling Set 1
+        {e:'🤖',w:'robot',a:'r',es:'robot'},{e:'🎩',w:'hat',a:'h',es:'sombrero'},{e:'🫧',w:'gum',a:'g',es:'chicle'},{e:'🥁',w:'drum',a:'d',es:'tambor'},{e:'🐞',w:'bug',a:'b',es:'insecto'},{e:'🐶',w:'dog',a:'d',es:'perro'},{e:'🐦',w:'bird',a:'b',es:'pájaro'},{e:'🛏️',w:'bed',a:'b',es:'cama'},{e:'🌀',w:'top',a:'t',es:'trompo'},{e:'🗺️',w:'map',a:'m',es:'mapa'},
+        // Spelling Set 2
+        {e:'✋',w:'hand',a:'h',es:'mano'},{e:'🐟',w:'fish',a:'f',es:'pez'},{e:'📦',w:'box',a:'b',es:'caja'},{e:'🧦',w:'socks',a:'s',es:'medias'},{e:'🐝',w:'hive',a:'h',es:'colmen'},{e:'✈️',w:'jet',a:'j',es:'avión'},{e:'🔥',w:'fire',a:'f',es:'fuego'},{e:'📖',w:'book',a:'b',es:'libro'},{e:'⛵',w:'sail',a:'s',es:'vela'},{e:'🫙',w:'jar',a:'j',es:'tarro'}
+    ];
+    
+    // HFW - Only the 9 words from exercises
+    const hfwData=['live','many','people','maybe','with','some','home','these'];
+    
+    // WH Questions - Stories with comprehension
+    const whStories = [
+        {title:"The Lost Puppy",story:"On Saturday morning, Mia goes to the park with her mom. She sees a small brown puppy under a tree. The puppy cries. Mia looks around but does not see the owner. She asks people, 'Is this your puppy?' Tom smiles and thanks Mia for helping him.",questions:[
+            {q:"Who is Mia?",options:["a. my mom","b. to the park","c. a girl"],answer:2},
+            {q:"When does Mia go to the park?",options:["a. a boy","b. on Saturday","c. every day"],answer:1},
+            {q:"What does Mia see?",options:["a. a dog","b. a rabbit","c. with her mom"],answer:0},
+            {q:"Where does Mia see it?",options:["a. in the park","b. on Saturday","c. every day"],answer:0},
+            {q:"Why does Tom thank Mia?",options:["a. She colors a picture","b. she finds his dog","c. the puppy cries"],answer:1}
+        ]},
+        {title:"Betty the Frog",story:"Betty is a frog. She is green with yellow spots. She has a long sticky tongue. She uses the tongue to get insects. Betty is happy today. There are a lot of flies. Betty lives near a pond. She likes to swim in the morning. Betty has strong legs to jump very high.",questions:[
+            {q:"Who is Betty?",options:["a. a cat","b. a frog","c. happy today"],answer:1},
+            {q:"What color is Betty?",options:["a. green and red","b. a lot of insects","c. green and yellow"],answer:2},
+            {q:"Where does Betty live?",options:["a. near a pond","b. near a rock","c. in the morning"],answer:0},
+            {q:"Why is Betty happy today?",options:["a. today","b. there are many insects","c. the frog is very big"],answer:1},
+            {q:"When does Betty like to swim?",options:["a. on Saturday","b. in the morning","c. in the pond"],answer:1}
+        ]},
+        {title:"Best Friends",story:"Paul and Rocky are best friends. Rocky is a good dog. They go out to play every day. Paul and his dog play in the yard. They love to play with a red ball. Paul is happy because he has a new red ball. It is a present from mom. Paul kicks the ball. Rocky runs to get it when Paul throws it. Paul loves his dog, and Rocky loves Paul too.",questions:[
+            {q:"Who is Paul?",options:["a. a boy","b. to play","c. a dog"],answer:0},
+            {q:"When do Paul and Rocky go out?",options:["a. a red ball","b. in the yard","c. every day"],answer:2},
+            {q:"What color is the ball?",options:["a. blue","b. a new ball","c. red"],answer:2},
+            {q:"Where do they play?",options:["a. in the yard","b. in the house","c. every day"],answer:0},
+            {q:"Why is Paul happy today?",options:["a. he has a soccer game","b. he has a new ball","c. Rocky is happy"],answer:1}
+        ]},
+        {title:"Ben's Jet",story:"Ben has a jet. He flies it in the park. He flies it on Sunday. He loves his jet.",questions:[
+            {q:"Who has a jet?",options:["a. Ben","b. Paul","c. Tom"],answer:0},
+            {q:"What does Ben have?",options:["a. a dog","b. a jet","c. a ball"],answer:1},
+            {q:"Where does Ben fly the jet?",options:["a. in the house","b. in the park","c. at school"],answer:1},
+            {q:"When does Ben fly the jet?",options:["a. on Monday","b. on Sunday","c. every day"],answer:1},
+            {q:"Why does Ben love his jet?",options:["a. it's fast","b. he loves his jet","c. it's blue"],answer:1}
+        ]}
+    ];
+    
+    let name='',stars=0,current='',items=[],fillIdx=0,hfwIdx=0,selectedLetter='',whStoryIdx=0,whQIdx=0;
+    function sh(a){let r=[...a];for(let i=r.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+    function show(i){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(i).classList.add('active');}
+    function start(){
+        document.getElementById('welcome').style.display = 'none';
+        document.getElementById('setup').style.display = 'flex';
+    }
+    function enter(){name=document.getElementById('nameInput').value.trim()||'Sebas';save();show('dashboard');}
+    function home(){document.getElementById('displayName').textContent=name;document.getElementById('totalStars').textContent=stars;document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('dashboard').classList.add('active');}
+    function save(){localStorage.setItem('sebasReading',JSON.stringify({name,stars}));}
+    function load(){let d=JSON.parse(localStorage.getItem('sebasReading'));if(d){name=d.name||'';stars=d.stars||0;}}
+    load();
+    
+    // CIRCLE SOUND
+    function startCircle(s){current=s;items=sh([...circleData[s].correct,...circleData[s].wrong]);renderCircle();show('circle');speakCircle();}
+    function renderCircle(){let g=document.getElementById('imgGrid');g.innerHTML='';items.forEach((it,i)=>{let c=document.createElement('div');c.className='img-card';c.dataset.l=it.l;c.onclick=()=>toggle(i);c.innerHTML='<span class="emoji">'+it.e+'</span><span class="label" style="display:none">'+it.l+'</span><div class="check"></div>';c.querySelector('.label').style.display='none';g.appendChild(c);});document.getElementById('soundLabel').textContent=current.toUpperCase();document.getElementById('soundName').textContent=current.toUpperCase();document.getElementById('soundNameES').textContent=current.toUpperCase();}
+    function toggle(i){
+        let c = document.querySelectorAll('.img-card')[i];
+        let label = c.dataset.l.toLowerCase();
+        let correctLabels = circleData[current].correct.map(x => x.l.toLowerCase());
+        
+        if(c.classList.contains('correct')){
+            // Unmark
+            c.classList.remove('correct');
+            c.querySelector('.check').textContent = '';
+            c.querySelector('.label').style.display = 'none';
+        }else{
+            // Check if correct
+            if(correctLabels.includes(label)){
+                c.classList.add('correct');
+                c.querySelector('.check').textContent = '✓';
+                c.querySelector('.label').style.display = 'block';
+                // Speak the word
+                const u = new SpeechSynthesisUtterance(label);
+                if(voiceEN) u.voice = voiceEN;
+                else u.lang = 'en-US';
+                speechSynthesis.speak(u);
+            }else{
+                // Wrong - show popup
+                c.classList.add('wrong');
+                c.querySelector('.check').textContent = '✗';
+                c.querySelector('.label').style.display = 'block';
+                alert('Try again! / ¡Intenta de nuevo!');
+                c.classList.remove('wrong');
+                c.querySelector('.check').textContent = '';
+                c.querySelector('.label').style.display = 'none';
+            }
+        }
+    }
+    function speakCircle(){
+        // English - try to use better voice
+        const u1 = new SpeechSynthesisUtterance('Circle the pictures that begin with the '+current.toUpperCase()+' sound. Tap on the correct pictures!');
+        u1.rate = 0.55;
+        u1.pitch = 1.0;
+        u1.volume = 1.0;
+        if(voiceEN) u1.voice = voiceEN;
+        else u1.lang = 'en-US';
+        speechSynthesis.speak(u1);
+        // Spanish after 3 seconds
+        setTimeout(()=>{
+            const u2 = new SpeechSynthesisUtterance('Rodea las imágenes que comienzan con el sonido '+current.toUpperCase()+'. ¡Toca las imágenes correctas!');
+            u2.rate = 0.55;
+            u2.pitch = 1.0;
+            u2.volume = 1.0;
+            if(voiceES) u2.voice = voiceES;
+            else u2.lang = 'es-ES';
+            speechSynthesis.speak(u2);
+        },3000);
+    }
+    function checkCircle(){
+        // Count marked items - if any are marked, show completion
+        let marked = document.querySelectorAll('.img-card.correct').length;
+        if(marked > 0){
+            stars += marked;
+            save();
+            show('complete');
+            showConfetti();
+        }else{
+            alert('Please mark some pictures! / ¡Marca algunas imágenes!');
+        }
+    }
+    
+    // FILL LETTER
+    function startFill(){fillIdx=0;selectedLetter='';window.shuffledFill=sh(fillData);renderFill();show('fill');}
+    
+    // WH Questions
+    function startWH(){
+        whStoryIdx=0;
+        whQIdx=0;
+        window.shuffledStories = sh(whStories);
+        // First shuffle questions within each story
+        window.shuffledStories.forEach(s => s.questions = sh(s.questions));
+        renderWH();
+        document.getElementById('wh-screen').classList.add('active');
+    }
+    function renderWH(){
+        const s = window.shuffledStories[whStoryIdx];
+        document.getElementById('whTitle').textContent = s.title;
+        document.getElementById('whText').textContent = s.story;
+        document.getElementById('whProgress').textContent = (whQIdx+1) + '/' + s.questions.length;
+        const q = s.questions[whQIdx];
+        document.getElementById('whQText').textContent = q.q;
+        
+        // Shuffle options
+        let opts = sh([...q.options.map((opt, i) => ({text: opt, correct: i === q.answer}))]);
+        // Update answer index after shuffle
+        q.answer = opts.findIndex(o => o.correct);
+        
+        const o = document.getElementById('whOptions');
+        o.innerHTML = '';
+        opts.forEach((opt, i) => {
+            let b = document.createElement('div');
+            b.className = 'hfw-card';
+            b.textContent = opt.text;
+            b.onclick = () => checkWH(i);
+            o.appendChild(b);
+        });
+    }
+    
+    function speakStory(){
+        const s = window.shuffledStories[whStoryIdx];
+        const u = new SpeechSynthesisUtterance(s.story);
+        u.rate = 0.55;
+        if(voiceEN) u.voice = voiceEN;
+        else u.lang = 'en-US';
+        speechSynthesis.speak(u);
+    }
+    function speakWH(){const s=window.shuffledStories[whStoryIdx];const q=s.questions[whQIdx];const u=new SpeechSynthesisUtterance(s.story+'. '+q.q);u.rate=0.55;if(voiceEN)u.voice=voiceEN;else u.lang='en-US';speechSynthesis.speak(u);}
+    function speakWHEN(){const s=window.shuffledStories[whStoryIdx];const q=s.questions[whQIdx];const u=new SpeechSynthesisUtterance('Listen to the story. Then answer the question. '+q.q);u.rate=0.55;if(voiceEN)u.voice=voiceEN;else u.lang='en-US';speechSynthesis.speak(u);}
+    function speakWHES(){const s=window.shuffledStories[whStoryIdx];const q=s.questions[whQIdx];const u=new SpeechSynthesisUtterance('Escucha la historia. Luego responde la pregunta.');u.rate=0.55;if(voiceES)u.voice=voiceES;else u.lang='es-ES';speechSynthesis.speak(u);}
+    function checkWH(c){const s=window.shuffledStories[whStoryIdx];const q=s.questions[whQIdx];if(c===q.answer){stars++;save();alert('✅ Correct! 🟡 ¡Correcto!');showConfetti();whQIdx++;if(whQIdx>=s.questions.length){whStoryIdx++;if(whStoryIdx>=whStories.length){show('complete');showConfetti();}else{whQIdx=0;renderWH()}}else{renderWH()}}else{alert('Try again!');}}
+    let selectedLetters = [];
+    
+    function renderSpelling(){
+        let it = window.shuffledFill[fillIdx];
+        document.getElementById('fillEmoji').textContent = it.e;
+        selectedLetters = [];
+        updateSpellingDisplay(it.w.length);
+        // Generate random letters including correct ones
+        let allLetters = it.w.split('');
+        let extraLetters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+        let shuffledExtra = sh(extraLetters.filter(l => !allLetters.includes(l))).slice(0, 10);
+        let options = sh([...allLetters, ...shuffledExtra]);
+        let b = document.getElementById('letterBtns');
+        b.innerHTML = '';
+        options.forEach(l => {
+            let btn = document.createElement('button');
+            btn.className = 'letter-btn';
+            btn.style.fontSize = '24px';
+            btn.style.padding = '15px 20px';
+            btn.textContent = l.toUpperCase();
+            btn.onclick = () => addLetter(l, it.w.length);
+            b.appendChild(btn);
+        });
+        document.getElementById('fillBar').style.width = (fillIdx / fillData.length * 100) + '%';
+    }
+    
+    function addLetter(l, wordLength){
+        if(selectedLetters.length < wordLength){
+            selectedLetters.push(l);
+            updateSpellingDisplay(wordLength);
+        }
+    }
+    
+    function updateSpellingDisplay(wordLength){
+        let display = selectedLetters.map((l, i) => {
+            return '<span style="color:#4ECDC4">' + l.toUpperCase() + '</span>';
+        });
+        while(display.length < wordLength){
+            display.push('<span style="color:#ccc">_</span>');
+        }
+        document.getElementById('fillWord').innerHTML = display.join(' ');
+    }
+    
+    function clearSpelling(){
+        let it = window.shuffledFill[fillIdx];
+        selectedLetters = [];
+        updateSpellingDisplay(it.w.length);
+    }
+    
+    function backspaceSpelling(){
+        if(selectedLetters.length > 0){
+            selectedLetters.pop();
+            let it = window.shuffledFill[fillIdx];
+            updateSpellingDisplay(it.w.length);
+        }
+    }
+    
+    function speakSpelling(){
+        let it = window.shuffledFill[fillIdx];
+        const u = new SpeechSynthesisUtterance(it.w);
+        u.rate = 0.55;
+        if(voiceEN) u.voice = voiceEN;
+        else u.lang = 'en-US';
+        speechSynthesis.speak(u);
+    }
+    
+    function speakSpellingEN(){
+        const u = new SpeechSynthesisUtterance('Spell the word! Click the letters in order.');
+        u.rate = 0.55;
+        if(voiceEN) u.voice = voiceEN;
+        else u.lang = 'en-US';
+        speechSynthesis.speak(u);
+    }
+    
+    function speakSpellingES(){
+        const u = new SpeechSynthesisUtterance('Escribe la palabra! Toca las letras en orden.');
+        u.rate = 0.55;
+        if(voiceES) u.voice = voiceES;
+        else u.lang = 'es-ES';
+        speechSynthesis.speak(u);
+    }
+    
+    function checkSpelling(){
+        let it = window.shuffledFill[fillIdx];
+        let typed = selectedLetters.join('').toLowerCase();
+        if(typed === it.w.toLowerCase()){
+            stars++;
+            alert('✅ Correct! 🟡 ' + it.es);
+            showConfetti();
+        }else{
+            alert('Try again!');
+            selectedLetters = [];
+            updateSpellingDisplay(it.w.length);
+            return;
+        }
+        fillIdx++;
+        if(fillIdx >= fillData.length){save();fillIdx=0;}
+        renderSpelling();
+        setTimeout(speakSpelling, 1000);
+    }
+    
+    function startFill(){
+        fillIdx=0;
+        window.shuffledFill=sh(fillData);
+        renderSpelling();
+        document.getElementById('fill').classList.add('active');
+        setTimeout(speakSpelling, 500);
+    }
+    
+    // HFW - 3 options, all words
+    function startHFW(){hfwIdx=0;renderHFW();document.getElementById('hfw').classList.add('active');playHFWInstructions();setTimeout(playHFW,2000);}
+    function renderHFW(){let g=document.getElementById('hfwGrid');g.innerHTML='';let correct=hfwData[hfwIdx];let opts=sh([correct,...sh(hfwData.filter(w=>w!==correct)).slice(0,2)]);hfwOptions=sh(opts);hfwOptions.forEach(w=>{let c=document.createElement('div');c.className='hfw-card';c.textContent=w;c.onclick=()=>checkHFW(w);g.appendChild(c);});document.getElementById('hfwProgress').textContent=(hfwIdx+1)+'/'+hfwData.length;}
+    function playHFW(){
+        const u = new SpeechSynthesisUtterance(hfwData[hfwIdx]);
+        u.rate = 0.55;
+        u.volume = 1.0;
+        if(voiceEN) u.voice = voiceEN;
+        else u.lang = 'en-US';
+        speechSynthesis.speak(u);
+    }
+    function playHFWInstructions(){
+        const u = new SpeechSynthesisUtterance('Listen and click the word!');
+        u.rate = 0.55;
+        if(voiceEN) u.voice = voiceEN;
+        else u.lang = 'en-US';
+        speechSynthesis.speak(u);
+    }
+    function playHWES(){
+        const u = new SpeechSynthesisUtterance('Escucha y toca la palabra correcta');
+        u.rate = 0.55;
+        if(voiceES) u.voice = voiceES;
+        else u.lang = 'es-ES';
+        speechSynthesis.speak(u);
+    }
+    function checkHFW(chosen){
+        // Speak the chosen word in English only
+        const chosenUT = new SpeechSynthesisUtterance(chosen);
+        chosenUT.rate = 0.55;
+        chosenUT.pitch = 1.0;
+        chosenUT.volume = 1.0;
+        if(voiceEN) chosenUT.voice = voiceEN;
+        else chosenUT.lang = 'en-US';
+        speechSynthesis.speak(chosenUT);
+        
+        let correct = hfwData[hfwIdx];
+        setTimeout(()=>{
+            if(chosen === correct){
+                hfwIdx++;
+                if(hfwIdx >= hfwData.length){
+                    stars += hfwData.length;
+                    save();
+                    show('complete');
+                    showConfetti();
+                }else{
+                    renderHFW();
+                }
+            }else{
+                document.getElementById('correctAnswer').textContent = correct;
+                document.getElementById('correctAnswerES').textContent = correct;
+                show('wrong');
+            }
+        }, 800);
+    }
+    function retryHFW(){renderHFW();}
+    function showConfetti(){let c=document.getElementById('confetti');c.innerHTML='';c.classList.add('on');let cols=['#FF6B6B','#4ECDC4','#FFE66D','#A66CFF','#5C7AEA','#6BCB77'];for(let i=0;i<50;i++){let p=document.createElement('div');p.className='piece';p.style.left=Math.random()*100+'%';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*2+'s';p.style.borderRadius=Math.random()>0.5?'50%':'0';c.appendChild(p);}setTimeout(()=>c.classList.remove('on'),5000);}
+    </script>
+</body>
+</html>
