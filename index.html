@@ -106,7 +106,7 @@
         </div>
         <p class="title">Choose an Activity</p>
         <div class="grid">
-            <div class="activity" onclick="document.getElementById('hfw').classList.add('active');document.getElementById('dashboard').classList.remove('active');hfwIdx=0;renderHFW();setTimeout(playHFW,1000)"><div class="activity-icon">📝</div><div class="activity-name">HFW</div></div>
+            <div class="activity" onclick="document.getElementById('hfw').classList.add('active');document.getElementById('dashboard').classList.remove('active');hfwIdx=0;window.shuffledHFW=sh(hfwData);renderHFW();setTimeout(playHFW,1000)"><div class="activity-icon">📝</div><div class="activity-name">HFW</div></div>
             <div class="activity" onclick="document.getElementById('dashboard').classList.remove('active');document.getElementById('fill').classList.add('active');fillIdx=0;window.shuffledFill=sh(fillData);renderSpelling();setTimeout(speakSpelling,500)"><div class="activity-icon">✏️</div><div class="activity-name">Spelling</div></div>
             <div class="activity" onclick="whStoryIdx=0;whQIdx=0;window.shuffledStories=sh(whStories);window.shuffledStories.forEach(s=>s.questions=sh(s.questions));renderWH();document.getElementById('wh-screen').classList.add('active');document.getElementById('dashboard').classList.remove('active')"><div class="activity-icon">❓</div><div class="activity-name">WH Questions</div></div>
         </div>
@@ -542,9 +542,9 @@
     
     // HFW - 3 options, all words
     function startHFW(){hfwIdx=0;renderHFW();document.getElementById('hfw').classList.add('active');playHFWInstructions();setTimeout(playHFW,2000);}
-    function renderHFW(){let g=document.getElementById('hfwGrid');g.innerHTML='';let correct=hfwData[hfwIdx];let opts=sh([correct,...sh(hfwData.filter(w=>w!==correct)).slice(0,2)]);hfwOptions=sh(opts);hfwOptions.forEach(w=>{let c=document.createElement('div');c.className='hfw-card';c.textContent=w;c.onclick=()=>checkHFW(w);g.appendChild(c);});document.getElementById('hfwProgress').textContent=(hfwIdx+1)+'/'+hfwData.length;}
+    function renderHFW(){let g=document.getElementById('hfwGrid');g.innerHTML='';let correct=window.shuffledHFW[hfwIdx];let opts=sh([correct,...sh(window.shuffledHFW.filter(w=>w!==correct)).slice(0,2)]);hfwOptions=sh(opts);hfwOptions.forEach(w=>{let c=document.createElement('div');c.className='hfw-card';c.textContent=w;c.onclick=()=>checkHFW(w);g.appendChild(c);});document.getElementById('hfwProgress').textContent=(hfwIdx+1)+'/'+window.shuffledHFW.length;}
     function playHFW(){
-        const u = new SpeechSynthesisUtterance(hfwData[hfwIdx]);
+        const u = new SpeechSynthesisUtterance(window.shuffledHFW[hfwIdx]);
         u.rate = 0.55;
         u.volume = 1.0;
         if(voiceEN) u.voice = voiceEN;
@@ -575,12 +575,12 @@
         else chosenUT.lang = 'en-US';
         speechSynthesis.speak(chosenUT);
         
-        let correct = hfwData[hfwIdx];
+        let correct = window.shuffledHFW[hfwIdx];
         setTimeout(()=>{
             if(chosen === correct){
                 hfwIdx++;
-                if(hfwIdx >= hfwData.length){
-                    stars += hfwData.length;
+                if(hfwIdx >= window.shuffledHFW.length){
+                    stars += window.shuffledHFW.length;
                     save();
                     show('complete');
                     showConfetti();
