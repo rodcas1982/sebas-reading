@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amanda's Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {--primary:#FF6B6B;--secondary:#4ECDC4;--accent:#FFE66D;--purple:#A66CFF;--blue:#5C7AEA;--green:#6BCB77;--dark:#2D3436;--white:#FFF;--shadow:0 8px 30px rgba(0,0,0,0.12);--shadow-lg:0 15px 50px rgba(0,0,0,0.15);}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFECD2,#FCB69F);min-height:100vh}
+        .screen{display:none;min-height:100vh;padding:20px}
+        .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .logo{font-size:80px;margin-bottom:20px;animation:bounce 2s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        h1{font-size:36px;font-weight:800;color:var(--purple);margin-bottom:10px;text-align:center}
+        p{font-size:18px;color:var(--dark);margin-bottom:40px;text-align:center}
+        .btn{background:linear-gradient(135deg,var(--purple),#C49BFF);color:#FFF;border:none;padding:20px 50px;font-size:22px;font-weight:700;border-radius:50px;cursor:pointer;box-shadow:0 10px 30px rgba(166,108,255,0.4)}
+        .btn:active{transform:scale(0.95)}
+        .card{background:var(--white);border-radius:30px;padding:30px;width:100%;max-width:450px;box-shadow:var(--shadow-lg)}
+        .card h2{font-size:24px;font-weight:700;color:var(--dark);margin-bottom:25px;text-align:center}
+        .input-group{margin-bottom:20px}
+        .input-group label{display:block;font-size:16px;font-weight:600;color:var(--dark);margin-bottom:8px}
+        .input-field{width:100%;padding:15px 20px;font-size:20px;border:3px solid #E8E8E8;border-radius:15px}
+        .input-field:focus{outline:none;border-color:var(--secondary)}
+        .setup-btn{width:100%;background:linear-gradient(135deg,var(--green),#8AE69D);color:#FFF;border:none;padding:18px;font-size:20px;font-weight:700;border-radius:18px;cursor:pointer}
+        .header{width:100%;max-width:800px;display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+        .greeting{font-size:24px;font-weight:700;color:var(--dark)}
+        .greeting span{color:var(--purple)}
+        .stars{display:flex;align-items:center;gap:8px;background:var(--accent);padding:10px 18px;border-radius:30px;font-size:18px;font-weight:700}
+        .title{font-size:22px;font-weight:700;color:var(--dark);margin-bottom:15px;text-align:center}
+        .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;width:100%;max-width:800px}
+        .activity{background:var(--white);border-radius:20px;padding:18px;cursor:pointer;transition:transform .3s;box-shadow:var(--shadow);text-align:center}
+        .activity:hover{transform:translateY(-3px)}
+        .activity-icon{font-size:38px;margin-bottom:8px}
+        .activity-name{font-size:14px;font-weight:700;color:var(--dark)}
+        .act-header{width:100%;max-width:700px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+        .back{background:var(--white);border:none;padding:12px 20px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
+        .badge{background:var(--purple);color:#FFF;padding:10px 25px;border-radius:20px;font-size:20px;font-weight:700}
+        .task{background:var(--white);border-radius:20px;padding:20px;width:100%;max-width:700px;margin-bottom:25px;box-shadow:var(--shadow)}
+        .task h3{color:var(--dark);margin-bottom:10px}
+        .task p{color:#666;font-size:16px;margin:0}
+        .img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:700px}
+        .img-card{background:var(--white);border-radius:16px;padding:10px;cursor:pointer;transition:all .3s;box-shadow:var(--shadow);text-align:center;border:3px solid transparent}
+        .img-card:hover{transform:scale(1.05)}
+        .img-card.correct{border-color:var(--green);background:#E8F8EE}
+        .img-card.wrong{border-color:var(--primary);background:#FFE8E8}
+        .img-card .emoji{font-size:38px;display:block;margin-bottom:4px}
+        .img-card .label{font-size:11px;font-weight:600;color:var(--dark)}
+        .img-card .check{width:24px;height:24px;border:3px solid #DDD;border-radius:50%;margin:4px auto 0;display:flex;align-items:center;justify-content:center;font-size:12px}
+        .img-card.correct .check{background:var(--green);border-color:var(--green);color:#FFF}
+        .fill-card{background:var(--white);border-radius:25px;padding:30px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);text-align:center}
+        .fill-word{font-size:45px;font-weight:800;color:var(--dark);margin:20px 0}
+        .fill-word .miss{color:var(--primary)}
+        .fill-emoji{font-size:90px;margin-bottom:15px}
+        .letter-btns{display:flex;gap:10px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+        .letter-btn{width:55px;height:55px;border:3px solid #DDD;border-radius:15px;background:var(--white);font-size:24px;font-weight:700;cursor:pointer}
+        .letter-btn:hover{border-color:var(--purple)}
+        .letter-btn.selected{border-color:var(--purple);background:var(--purple);color:#FFF}
+        .hfw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:500px}
+        .hfw-card{background:var(--white);border-radius:14px;padding:14px;cursor:pointer;transition:all .3s;box-shadow:var(--shadow);text-align:center;border:3px solid transparent;font-size:18px;font-weight:700}
+        .hfw-card:hover{transform:scale(1.05)}
+        .hfw-card.correct{background:var(--green);border-color:var(--green);color:#FFF}
+        .hfw-card.wrong{background:var(--primary);border-color:var(--primary);color:#FFF}
+        .complete{text-align:center;padding:40px}
+        .trophy{font-size:80px;margin-bottom:15px}
+        .complete h2{font-size:32px;font-weight:800;color:var(--green);margin-bottom:10px}
+        .stars-earned{font-size:40px;margin-bottom:25px}
+        .continue{background:linear-gradient(135deg,var(--purple),#C49BFF);color:#FFF;border:none;padding:15px 40px;font-size:18px;font-weight:700;border-radius:50px;cursor:pointer}
+        .actions{display:flex;gap:15px;justify-content:center;margin-top:25px;flex-wrap:wrap}
+        .action-btn{padding:14px 28px;font-size:16px;font-weight:700;border-radius:50px;cursor:pointer;border:none;display:flex;align-items:center;gap:8px}
+        .check-btn{background:linear-gradient(135deg,var(--green),#8AE69D);color:#FFF}
+        .next-btn{background:linear-gradient(135deg,var(--secondary),#7EDDD6);color:#FFF}
+        .speak-btn{background:linear-gradient(135deg,var(--blue),#7B93FF);color:#FFF}
+        .bar{background:#E8E8E8;width:100%;max-width:700px;height:12px;border-radius:10px;overflow:hidden;margin-bottom:20px}
+        .fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--secondary));border-radius:10px;transition:width .5s}
+        .confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;display:none}
+        .confetti.on{display:block}
+        .piece{position:absolute;width:12px;height:12px;animation:fall 3s linear forwards}
+        @keyframes fall{to{transform:translateY(100vh) rotate(720deg);opacity:0}}
+        @media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}.img-grid{grid-template-columns:repeat(3,1fr)}.hfw-grid{grid-template-columns:repeat(3,1fr)}}
+    </style>
+</head>
+<body>
+    <div id="welcome" class="screen active">
+        <div class="logo">👧</div>
+        <h1>Amanda's Reading</h1>
+        <p>Learn English with Fun!</p>
+        <button class="btn" onclick="start()">Start! 🚀</button>
+    </div>
+    <div id="setup" class="screen">
+        <div class="card">
+            <h2>👋 What's Your Name?</h2>
+            <div class="input-group">
+                <label>Your Name</label>
+                <input type="text" id="nameInput" class="input-field" placeholder="Your name" maxlength="15">
+            </div>
+            <button class="setup-btn" onclick="enter()">Let's Learn! 🎉</button>
+        </div>
+    </div>
+    <div id="dashboard" class="screen">
+        <div class="header">
+            <div class="greeting">Hi, <span id="displayName">Friend</span>! 👋</div>
+            <div class="stars">⭐ <span id="totalStars">0</span></div>
+        </div>
+        <p class="title">Choose an Activity</p>
+        <div class="grid">
+            <div class="activity" onclick="startHFW()"><div class="activity-icon">📝</div><div class="activity-name">High Frequency Words</div></div>
+            <div class="activity" onclick="startCircle('s')"><div class="activity-icon">🔴</div><div class="activity-name">Sound S</div></div>
+            <div class="activity" onclick="startCircle('t')"><div class="activity-icon">🔵</div><div class="activity-name">Sound T</div></div>
+            <div class="activity" onclick="startCircle('b')"><div class="activity-icon">🟡</div><div class="activity-name">Sound B</div></div>
+            <div class="activity" onclick="startCircle('h')"><div class="activity-icon">🟠</div><div class="activity-name">Sound H</div></div>
+            <div class="activity" onclick="startCircle('m')"><div class="activity-icon">🟣</div><div class="activity-name">Sound M</div></div>
+            <div class="activity" onclick="startCircle('k')"><div class="activity-icon">🟢</div><div class="activity-name">Sound K</div></div>
+            <div class="activity" onclick="startFill()"><div class="activity-icon">✏️</div><div class="activity-name">Fill Letter</div></div>
+        </div>
+    </div>
+    <div id="circle" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">Sound: <span id="soundLabel">S</span></div>
+        </div>
+        <div class="bar"><div class="fill" id="progressBar" style="width:0%"></div></div>
+        <div class="task">
+            <h3>🔊 Circle the pictures!</h3>
+            <p>Circle pictures that BEGIN with <strong><span id="soundName">S</span></strong>!</p>
+            <p style="color:#888;margin-top:10px">🟡 Rodea las imágenes que empiezan con <strong><span id="soundNameES">S</span></strong></p>
+        </div>
+        <div class="img-grid" id="imgGrid"></div>
+        <div class="actions">
+            <button class="action-btn speak-btn" onclick="speakCircle()">🔊 Listen</button>
+            <button class="action-btn check-btn" onclick="checkCircle()">✓ Check</button>
+        </div>
+    </div>
+    <div id="fill" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">✏️ Fill Letter</div>
+        </div>
+        <div class="bar"><div class="fill" id="fillBar" style="width:0%"></div></div>
+        <div class="fill-card">
+            <div class="fill-emoji" id="fillEmoji">☀️</div>
+            <div class="fill-word" id="fillWord">_un</div>
+            <p style="color:#666;margin-bottom:15px">What letter is missing?</p>
+            <p style="color:#888;">🟡 ¿Qué letra falta?</p>
+            <div class="letter-btns" id="letterBtns"></div>
+        </div>
+        <div class="actions">
+            <button class="action-btn speak-btn" onclick="speakFill()">🔊 Listen</button>
+            <button class="action-btn check-btn" onclick="checkFill()">✓ Check</button>
+        </div>
+    </div>
+    <div id="hfw" class="screen">
+        <div class="act-header">
+            <button class="back" onclick="home()">← Back</button>
+            <div class="badge">📝 HFW <span id="hfwProgress"></span></div>
+        </div>
+        <div class="task">
+            <h3>🔊 Listen and click!</h3>
+            <p>Listen and click the correct word!</p>
+            <p style="color:#888;margin-top:10px">🟡 ¡Escucha y toca la palabra correcta!</p>
+        </div>
+        <div class="hfw-grid" id="hfwGrid"></div>
+        <div class="actions">
+            <button class="action-btn speak-btn" onclick="playHFW()">🔊 Listen</button>
+        </div>
+    </div>
+    <div id="complete" class="screen">
+        <div class="complete">
+            <div class="trophy">🏆</div>
+            <h2>Great Job!</h2>
+            <div class="stars-earned" id="earnedStars">⭐⭐⭐</div>
+            <button class="continue" onclick="home()">Continue →</button>
+        </div>
+    </div>
+    <div id="wrong" class="screen">
+        <div class="complete">
+            <div class="trophy">😅</div>
+            <h2>Try Again!</h2>
+            <p style="margin-bottom:10px">The answer was: <strong id="correctAnswer"></strong></p>
+            <p style="margin-bottom:20px;color:#888">🟡 La respuesta era: <strong id="correctAnswerES"></strong></p>
+            <button class="continue" onclick="retryHFW()">Try Again →</button>
+        </div>
+    </div>
+    <div class="confetti" id="confetti"></div>
+    <script>
+    // Voice setup - try to get best available voice
+    let voiceEN = null;
+    let voiceES = null;
+    
+    function loadBetterVoices() {
+        const voices = speechSynthesis.getVoices();
+        // Find English female voice (usually sounds more natural)
+        voiceEN = voices.find(v => v.lang.startsWith('en') && v.name.includes('Female')) || 
+                  voices.find(v => v.lang.startsWith('en')) || null;
+        // Find Spanish female voice
+        voiceES = voices.find(v => v.lang.startsWith('es') && v.name.includes('Female')) || 
+                  voices.find(v => v.lang.startsWith('es')) || null;
+    }
+    
+    // Try loading voices multiple times (some browsers need it)
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadBetterVoices;
+    }
+    setTimeout(loadBetterVoices, 100);
+    setTimeout(loadBetterVoices, 500);
+    setTimeout(loadBetterVoices, 1000);
+    
+    // EXACT WORDS FROM AMANDA'S EXERCISES
+    const circleData={
+        s:{correct:[{e:'☀️',l:'Sun'},{e:'🥪',l:'Sandwich'},{e:'🧼',l:'Soap'},{e:'6️⃣',l:'Six'},{e:'🪚',l:'Saw'},{e:'🧦',l:'Sock'},{e:'🚿',l:'Sink'},{e:'👔',l:'Suit'},{e:'⛵',l:'Sail'},{e:'🪑',l:'Seat'}],wrong:[{e:'🛏️',l:'Bed'},{e:'🚪',l:'Door'},{e:'🔔',l:'Bell'},{e:'2️⃣',l:'Two'}]},
+        t:{correct:[{e:'🌀',l:'Top'},{e:'🧸',l:'Toys'},{e:'🔟',l:'Ten'},{e:'🎫',l:'Tape'},{e:'🎟️',l:'Ticket'},{e:'2️⃣',l:'Two'},{e:'🛞',l:'Tire'},{e:'⛺',l:'Tent'},{e:'📌',l:'Tack'},{e:'🛁',l:'Tub'}],wrong:[{e:'❤️',l:'Heart'},{e:'🚰',l:'Sink'},{e:'🐕',l:'Dog'},{e:'🦇',l:'Bat'}]},
+        b:{correct:[{e:'👶',l:'Baby'},{e:'🐞',l:'Bug'},{e:'⚾',l:'Bat'},{e:'👜',l:'Bag'},{e:'⛵',l:'Boat'},{e:'🛏️',l:'Bed'},{e:'🔔',l:'Bell'},{e:'🚌',l:'Bus'}],wrong:[{e:'🦆',l:'Duck'},{e:'🐒',l:'Monkey'},{e:'🪚',l:'Saw'},{e:'🛞',l:'Tire'}]},
+        h:{correct:[{e:'🎩',l:'Hat'},{e:'❤️',l:'Heart'},{e:'✋',l:'Hand'},{e:'⛰️',l:'Hill'},{e:'🏠',l:'House'},{e:'🔥',l:'Hot'},{e:'🍖',l:'Ham'},{e:'👠',l:'Heel'}],wrong:[{e:'👨',l:'Man'},{e:'🧹',l:'Mop'},{e:'🔑',l:'Key'}]},
+        m:{correct:[{e:'🧹',l:'Mop'},{e:'💰',l:'Money'},{e:'🐭',l:'Mouse'},{e:'👨',l:'Man'},{e:'🗺️',l:'Map'},{e:'🌙',l:'Moon'},{e:'🥛',l:'Milk'},{e:'🧤',l:'Mitt'}],wrong:[{e:'🥪',l:'Sandwich'},{e:'🐞',l:'Bug'},{e:'🧤',l:'Glove'}]},
+        k:{correct:[{e:'🔑',l:'Key'},{e:'👑',l:'King'},{e:'🪁',l:'Kite'},{e:'🐨',l:'Koala'},{e:'🐈',l:'Kitten'},{e:'🦘',l:'Kangaroo'}],wrong:[{e:'🐱',l:'Cat'},{e:'🧤',l:'Mitt'},{e:'🥛',l:'Milk'}]}
+    };
+    
+    // FILL LETTER - Words from exercises
+    // Fill Letter - ONLY words from exercises
+    const fillData=[
+        // S words
+        {e:'🪚',w:'saw',a:'s'},{e:'☀️',w:'sun',a:'s'},{e:'6️⃣',w:'six',a:'s'},{e:'🧦',w:'sock',a:'s'},{e:'👔',w:'suit',a:'s'},{e:'⛵',w:'sail',a:'s'},{e:'🚿',w:'sink',a:'s'},{e:'🪑',w:'seat',a:'s'},
+        // T words  
+        {e:'🌀',w:'top',a:'t'},{e:'🛞',w:'tire',a:'t'},{e:'⛺',w:'tent',a:'t'},{e:'🎫',w:'tape',a:'t'},{e:'📌',w:'tack',a:'t'},{e:'🛁',w:'tub',a:'t'},{e:'🧸',w:'toys',a:'t'},{e:'🔟',w:'ten',a:'t'},
+        // B words - removed ball, using baseball bat only,{e:'⛵',w:'boat',a:'b'},{e:'👜',w:'bag',a:'b'},{e:'📦',w:'box',a:'b'},{e:'🛏️',w:'bed',a:'b'},{e:'🐻',w:'bear',a:'b'},{e:'👶',w:'baby',a:'b'},{e:'🚌',w:'bus',a:'b'},{e:'⚾',w:'bat',a:'b'},
+        // H words
+        {e:'🎩',w:'hat',a:'h'},{e:'🏠',w:'house',a:'h'},{e:'❤️',w:'heart',a:'h'},{e:'🔥',w:'hot',a:'h'},{e:'🍖',w:'ham',a:'h'},{e:'👠',w:'heel',a:'h'},{e:'🐴',w:'horse',a:'h'},
+        // M words
+        {e:'🌙',w:'moon',a:'m'},{e:'🗺️',w:'map',a:'m'},{e:'🥛',w:'milk',a:'m'},{e:'🧹',w:'mop',a:'m'},{e:'💰',w:'money',a:'m'},{e:'🐭',w:'mouse',a:'m'},{e:'🥩',w:'meat',a:'m'},
+        // K words
+        {e:'🔑',w:'key',a:'k'},{e:'👑',w:'king',a:'k'},{e:'🪁',w:'kite',a:'k'}
+    ];
+    
+    // HFW - Only the 9 words from exercises
+    const hfwData=['I','He','She','It','We','They','am','is','are'];
+    
+    let name='',stars=0,current='',items=[],fillIdx=0,hfwIdx=0,selectedLetter='',hfwOptions=[];
+    function sh(a){let r=[...a];for(let i=r.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+    function show(i){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(i).classList.add('active');}
+    function start(){show('setup');}
+    function enter(){name=document.getElementById('nameInput').value.trim()||'Amanda';save();show('dashboard');}
+    function home(){document.getElementById('displayName').textContent=name;document.getElementById('totalStars').textContent=stars;show('dashboard');}
+    function save(){localStorage.setItem('amandaReading',JSON.stringify({name,stars}));}
+    function load(){let d=JSON.parse(localStorage.getItem('amandaReading'));if(d){name=d.name||'';stars=d.stars||0;}}
+    load();
+    
+    // CIRCLE SOUND
+    function startCircle(s){current=s;items=sh([...circleData[s].correct,...circleData[s].wrong]);renderCircle();show('circle');speakCircle();}
+    function renderCircle(){let g=document.getElementById('imgGrid');g.innerHTML='';items.forEach((it,i)=>{let c=document.createElement('div');c.className='img-card';c.dataset.l=it.l;c.onclick=()=>toggle(i);c.innerHTML='<span class="emoji">'+it.e+'</span><span class="label" style="display:none">'+it.l+'</span><div class="check"></div>';c.querySelector('.label').style.display='none';g.appendChild(c);});document.getElementById('soundLabel').textContent=current.toUpperCase();document.getElementById('soundName').textContent=current.toUpperCase();document.getElementById('soundNameES').textContent=current.toUpperCase();}
+    function toggle(i){
+        let c = document.querySelectorAll('.img-card')[i];
+        let label = c.dataset.l.toLowerCase();
+        let correctLabels = circleData[current].correct.map(x => x.l.toLowerCase());
+        
+        if(c.classList.contains('correct')){
+            // Unmark
+            c.classList.remove('correct');
+            c.querySelector('.check').textContent = '';
+            c.querySelector('.label').style.display = 'none';
+        }else{
+            // Check if correct
+            if(correctLabels.includes(label)){
+                c.classList.add('correct');
+                c.querySelector('.check').textContent = '✓';
+                c.querySelector('.label').style.display = 'block';
+                // Speak the word
+                const u = new SpeechSynthesisUtterance(label);
+                if(voiceEN) u.voice = voiceEN;
+                else u.lang = 'en-US';
+                speechSynthesis.speak(u);
+            }else{
+                // Wrong - show popup
+                c.classList.add('wrong');
+                c.querySelector('.check').textContent = '✗';
+                c.querySelector('.label').style.display = 'block';
+                alert('Try again! / ¡Intenta de nuevo!');
+                c.classList.remove('wrong');
+                c.querySelector('.check').textContent = '';
+                c.querySelector('.label').style.display = 'none';
+            }
+        }
+    }
+    function speakCircle(){
+        // English - try to use better voice
+        const u1 = new SpeechSynthesisUtterance('Circle the pictures that begin with the '+current.toUpperCase()+' sound. Tap on the correct pictures!');
+        u1.rate = 0.55;
+        u1.pitch = 1.0;
+        u1.volume = 1.0;
+        if(voiceEN) u1.voice = voiceEN;
+        else u1.lang = 'en-US';
+        speechSynthesis.speak(u1);
+        // Spanish after 3 seconds
+        setTimeout(()=>{
+            const u2 = new SpeechSynthesisUtterance('Rodea las imágenes que comienzan con el sonido '+current.toUpperCase()+'. ¡Toca las imágenes correctas!');
+            u2.rate = 0.55;
+            u2.pitch = 1.0;
+            u2.volume = 1.0;
+            if(voiceES) u2.voice = voiceES;
+            else u2.lang = 'es-ES';
+            speechSynthesis.speak(u2);
+        },3000);
+    }
+    function checkCircle(){
+        // Count marked items - if any are marked, show completion
+        let marked = document.querySelectorAll('.img-card.correct').length;
+        if(marked > 0){
+            stars += marked;
+            save();
+            show('complete');
+            showConfetti();
+        }else{
+            alert('Please mark some pictures! / ¡Marca algunas imágenes!');
+        }
+    }
+    
+    // FILL LETTER
+    function startFill(){fillIdx=0;selectedLetter='';window.shuffledFill=sh(fillData);renderFill();show('fill');}
+    function renderFill(){let it=window.shuffledFill[fillIdx];document.getElementById('fillEmoji').textContent=it.e;document.getElementById('fillWord').innerHTML='<span class="miss">_</span>'+it.w.slice(1);let b=document.getElementById('letterBtns');b.innerHTML='';let opts=sh([it.a,'b','c','d']);opts.forEach(l=>{let btn=document.createElement('button');btn.className='letter-btn';btn.textContent=l.toUpperCase();btn.onclick=()=>{selectedLetter=l;document.querySelectorAll('.letter-btn').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');};b.appendChild(btn);});document.getElementById('fillBar').style.width=(fillIdx/fillData.length*100)+'%';}
+    function speakFill(){
+        // English - better voice
+        const u1 = new SpeechSynthesisUtterance(window.shuffledFill[fillIdx].w);
+        u1.rate = 0.55;
+        u1.pitch = 1.0;
+        u1.volume = 1.0;
+        if(voiceEN) u1.voice = voiceEN;
+        else u1.lang = 'en-US';
+        speechSynthesis.speak(u1);
+        // Spanish after 1.5 seconds
+        setTimeout(()=>{
+            const u2 = new SpeechSynthesisUtterance(window.shuffledFill[fillIdx].w);
+            u2.rate = 0.55;
+            u2.pitch = 1.0;
+            u2.volume = 1.0;
+            if(voiceES) u2.voice = voiceES;
+            else u2.lang = 'es-ES';
+            speechSynthesis.speak(u2);
+        },1500);
+    }
+    function checkFill(){
+        if(!selectedLetter){alert('Pick a letter first!');return;}
+        let it=window.shuffledFill[fillIdx];
+        if(selectedLetter===it.a){
+            stars++;
+            showConfetti();
+        }else{
+            alert('Try again! The answer was '+it.a);
+        }
+        fillIdx++;
+        if(fillIdx>=fillData.length){save();fillIdx=0;}
+        selectedLetter='';
+        renderFill();
+        // Auto-play next word
+        setTimeout(speakFill, 500);
+    }
+    
+    // HFW - 3 options, all words
+    function startHFW(){hfwIdx=0;renderHFW();show('hfw');setTimeout(playHFW,500);}
+    function renderHFW(){let g=document.getElementById('hfwGrid');g.innerHTML='';let correct=hfwData[hfwIdx];// Get 3 options: correct + 2 random
+    let opts=sh([correct,...sh(hfwData.filter(w=>w!==correct)).slice(0,2)]);hfwOptions=sh(opts);hfwOptions.forEach(w=>{let c=document.createElement('div');c.className='hfw-card';c.textContent=w;c.onclick=()=>checkHFW(w);g.appendChild(c);});document.getElementById('hfwProgress').textContent=(hfwIdx+1)+'/'+hfwData.length;}
+    function playHFW(){
+        // Instructions in English first
+        const u1 = new SpeechSynthesisUtterance('Listen and click the word!');
+        u1.rate = 0.55;
+        u1.pitch = 1.0;
+        u1.volume = 1.0;
+        if(voiceEN) u1.voice = voiceEN;
+        else u1.lang = 'en-US';
+        speechSynthesis.speak(u1);
+        
+        // Then the word in English (after 1.5s)
+        setTimeout(()=>{
+            const u2 = new SpeechSynthesisUtterance(hfwData[hfwIdx]);
+            u2.rate = 0.55;
+            u2.pitch = 1.0;
+            u2.volume = 1.0;
+            if(voiceEN) u2.voice = voiceEN;
+            else u2.lang = 'en-US';
+            speechSynthesis.speak(u2);
+        },1500);
+        
+        // Instructions in Spanish (after 3s)
+        setTimeout(()=>{
+            const u3 = new SpeechSynthesisUtterance('¡Escucha y toca la palabra!');
+            u3.rate = 0.55;
+            u3.pitch = 1.0;
+            u3.volume = 1.0;
+            if(voiceES) u3.voice = voiceES;
+            else u3.lang = 'es-ES';
+            speechSynthesis.speak(u3);
+        },3000);
+    }
+    function checkHFW(chosen){
+        // Speak the chosen word in English only
+        const chosenUT = new SpeechSynthesisUtterance(chosen);
+        chosenUT.rate = 0.55;
+        chosenUT.pitch = 1.0;
+        chosenUT.volume = 1.0;
+        if(voiceEN) chosenUT.voice = voiceEN;
+        else chosenUT.lang = 'en-US';
+        speechSynthesis.speak(chosenUT);
+        
+        let correct = hfwData[hfwIdx];
+        setTimeout(()=>{
+            if(chosen === correct){
+                hfwIdx++;
+                if(hfwIdx >= hfwData.length){
+                    stars += hfwData.length;
+                    save();
+                    show('complete');
+                    showConfetti();
+                }else{
+                    renderHFW();
+                    setTimeout(playHFW, 1000);
+                }
+            }else{
+                document.getElementById('correctAnswer').textContent = correct;
+                document.getElementById('correctAnswerES').textContent = correct;
+                show('wrong');
+            }
+        }, 800);
+    }
+    function retryHFW(){renderHFW();setTimeout(playHFW,800);}
+    function showConfetti(){let c=document.getElementById('confetti');c.innerHTML='';c.classList.add('on');let cols=['#FF6B6B','#4ECDC4','#FFE66D','#A66CFF','#5C7AEA','#6BCB77'];for(let i=0;i<50;i++){let p=document.createElement('div');p.className='piece';p.style.left=Math.random()*100+'%';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*2+'s';p.style.borderRadius=Math.random()>0.5?'50%':'0';c.appendChild(p);}setTimeout(()=>c.classList.remove('on'),5000);}
+    </script>
+</body>
+</html>
